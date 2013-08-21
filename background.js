@@ -1,6 +1,5 @@
 chrome.browserAction.onClicked.addListener(function(tab) {
 	url = "https://login.taobao.com/member/login.jhtml";
-	alert(11);
 	chrome.tabs.create( { url:url }, function(){
 		login();
 	});
