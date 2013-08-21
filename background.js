@@ -1,3 +1,19 @@
+int index;
+
+var accounts = new Array(["jinsuiyong","jsyjsy19861108"],
+						 ["jinsuiyong","jsyjsy19861108"]);
+						 
+function start() {
+	
+}
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+	chrome.tabs.create({url:""});
+	setTimeout(function() {
+		start();
+    }, 3000);
+});
+
 chrome.browserAction.onClicked.addListener(function(tab) {
 	url = "https://login.taobao.com/member/login.jhtml";
 	chrome.tabs.create( { url:url }, function(){
