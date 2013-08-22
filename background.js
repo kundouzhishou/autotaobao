@@ -1,50 +1,73 @@
-int index;
+var index = 0;
 
-var accounts = new Array(["jinsuiyong","jsyjsy19861108"],
-						 ["jinsuiyong","jsyjsy19861108"]);
+var lastTabId = -1;
+
+var accounts = new Array({
+	username: "jinsuiyong",
+	password: "jsyjsy19861108",
+	paypassword: "11"
+},{
+	username: "jinsuiyong",
+	password: "jsyjsy19861108",
+	paypassword: "22"
+});
 						 
+function sendMessage(msg) {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    lastTabId = tabs[0].id;
+    chrome.tabs.sendMessage(lastTabId, msg);
+  });
+}
+
 function start() {
+	//alert("start");
+	execLogin();
+}
+
+function execLogin() {
+	// É¾³ý cookie
+	removeTaobaoCookie();
+	alert("execLogin");
+	return;
 	
-}
-
-chrome.browserAction.onClicked.addListener(function(tab) {
-	chrome.tabs.create({url:""});
-	setTimeout(function() {
-		start();
-    }, 3000);
-});
-
-chrome.browserAction.onClicked.addListener(function(tab) {
+	if(index > accounts.length - 1) {
+		alert("finish");
+		return;
+	}
+	//alert("index:" + index + ",accounts:" + accounts);
+	var account = accounts[index];
+	index++;
+	alert("index:" + index + ",username:" + account.username + ",pay:" + account.paypassword);
+	
 	url = "https://login.taobao.com/member/login.jhtml";
-	chrome.tabs.create( { url:url }, function(){
-		login();
-	});
-});
-
-function login() {
-	chrome.tabs.executeScript(null,{file:"login.js"},function(){
-		//chrome.tabs.onUpdated.addListener(updateTab);
-		window.open("https://login.taobao.com/member/login.jhtml");
+	chrome.tabs.update(lastTabId, { url:url }, function(tab){
+		chrome.tabs.executeScript(tab.id,{file:"login.js"},function(){
+			//alert("login url complete");
+			sendMessage(account);
+		});
 	});
 }
 
-function updateTab( tabId, info, tab ) {	
-	//alert("update tab");
-	chrome.tabs.getSelected(null, function(tab) {
-		if( info.status=="complete" ){ 
-			//alert("update complete");
-			chrome.tabs.onUpdated.removeListener(updateTab);
+/**
+ * É¾³ýËùÓÐcookie
+ */
+function removeTaobaoCookie() {
+	alert("remove taobao cookie");
+	chrome.cookies.getAll({domain: "taobao.com"}, function(cookies) {
+		alert(cookies);
+		for (var cookie in cookies) {
+			var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain +
+            cookie.path;
+  			chrome.cookies.remove({"url": url, "name": cookie.name});
 		}
-    });
+	});
 }
 
-function getValue(key) {
-	return localStorage.getItem(key);
-}
-
-chrome.runtime.onMessage.addListener(function(request, sender, callback) {
-    if (request.type == 'localStorage'){
-		//alert("save -- username:" + request.name + ",password:" + request.value);
-        localStorage.setItem(request.name, request.value);
-    }
+chrome.browserAction.onClicked.addListener(function(tab) {
+	chrome.tabs.create({url: ""}, function(tab) {
+		//alert("action clicked");
+		removeTaobaoCookie();
+		lastTabId = tab.id;
+		start();
+  	});
 });
