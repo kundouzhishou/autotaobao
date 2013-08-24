@@ -15,10 +15,11 @@ var accounts = new Array({
 var urls = new Array("http://item.taobao.com/item.htm?spm=a230r.1.14.1.WAd0cO&id=20595363875&_u=n24q2sl2a48");
 						 
 function sendMessage(msg) {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    lastTabId = tabs[0].id;
-    chrome.tabs.sendMessage(lastTabId, msg);
-  });
+	//alert("send message");
+  	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    	lastTabId = tabs[0].id;
+    	chrome.tabs.sendMessage(lastTabId, msg);
+  	});
 }
 
 function start() {
@@ -82,7 +83,7 @@ chrome.tabs.onUpdated.addListener(function(tabid, info, tab) {
 			var url = urls[0];
 			chrome.tabs.update(tab.id, { url:url }, function(tab){
 				chrome.tabs.executeScript(tab.id,{file:"buy.js"},function(){
-				sendMessage();
+					sendMessage({});
 				});
 			});
 		}
