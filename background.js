@@ -28,7 +28,6 @@ function start() {
 }
 
 function execLogin() {
-	// 删除 cookie
 	//removeTaobaoCookie();
 	//alert("execLogin");
 	
@@ -50,10 +49,6 @@ function execLogin() {
 	});
 }
 
-/**
- * 删除所有cookie
- * TODO 执行有问题,会影响调用方的后续代码
- */
 function removeTaobaoCookie() {
 	alert("remove taobao cookie");
 	chrome.cookies.getAll({domain:"taobao.com"}, function(cookies) {
@@ -73,11 +68,11 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 		lastTabId = tab.id;
 		start();
   	});
-})
+});
 
 chrome.tabs.onUpdated.addListener(function(tabid, info, tab) {
 	if(info.status == "complete") {
-		if(tab.url.indexOf("i.taobao.com") != -1) {
+		if(tabContains(tab,"i.taobao.com") != -1) {
 			//alert("login success");
 			// TODO
 			var url = urls[0];
@@ -86,7 +81,19 @@ chrome.tabs.onUpdated.addListener(function(tabid, info, tab) {
 					sendMessage({});
 				});
 			});
+		}else if(tabContains(tab,"buy.taobao.com") != -1) {
+			chrome.tabs.executeScript(tab.id,{file:"order.js"},function(){
+				sendMessage({});
+			});
+		}else if(tabContains(tab,"cashier.alipay.com")) {
+			chrome.tabs.executeScript(tab.id,{file:"order.js"},function(){
+				sendMessage({});
+			});
 		}
 	}
-	
-})
+});
+
+function tabContains(var tab, var url) {
+	if(tab.url.indexOf(url) != -1) return true;
+	return false;
+}
