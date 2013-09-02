@@ -114,7 +114,7 @@ chrome.tabs.onUpdated.addListener(function(tabid, info, tab){
     if (info.status == "complete") {
 		
         if (tabContains(tab, "i.taobao.com")) {
-            alert("login success");
+            //alert("login success");
             var url = buyurl;
             chrome.tabs.update(tab.id, {
                 url: url
