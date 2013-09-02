@@ -50,6 +50,7 @@ function execLogin(){
         "url": url
     }, function(tab){
 		workTab = tab;
+		//alert("worktab:" + workTab);
         chrome.tabs.executeScript(tab.id, {
             file: "login.js"
         }, function(){
@@ -105,14 +106,15 @@ chrome.runtime.onMessage.addListener(function(msg, _, sendResponse){
 });
 
 chrome.tabs.onUpdated.addListener(function(tabid, info, tab){
-    if (tab != workTab.id) {
+    if (tabid != workTab.id) {
 		//alert("not tab");
 		return;
 	}
-    
+	//alert("is tab:" + tab.url + ",status:" + info.status);
     if (info.status == "complete") {
+		
         if (tabContains(tab, "i.taobao.com")) {
-            //alert("login success");
+            alert("login success");
             var url = buyurl;
             chrome.tabs.update(tab.id, {
                 url: url
@@ -125,29 +127,26 @@ chrome.tabs.onUpdated.addListener(function(tabid, info, tab){
                 });
             });
         }
-        else 
-            if (tabContains(tab, "buy.taobao.com")) {
-                chrome.tabs.executeScript(tab.id, {
-                    file: "order.js"
-                }, function(){
-                    sendMessage({});
-                });
-            }
-            else 
-                if (tabContains(tab, "cashier.alipay.com")) {
-                    chrome.tabs.executeScript(tab.id, {
-                        file: "pay.js"
-                    }, function(){
-                        sendMessage({});
-                    });
-                }
-                else 
-                    if (tabContains(tab, "trade.taobao.com")) {
-                        // 完成购买
-                        setCookie(getAccountCookieKey(accounts[index], buyurl), 2);
-                        updateHomeStats();
-                        start();
-                    }
+        else if (tabContains(tab, "buy.taobao.com")) {
+            chrome.tabs.executeScript(tab.id, {
+                file: "order.js"
+            }, function(){
+                sendMessage({});
+            });
+        }
+		else if (tabContains(tab, "cashier.alipay.com")) {
+            chrome.tabs.executeScript(tab.id, {
+                file: "pay.js"
+            }, function(){
+                sendMessage({});
+            });
+        }
+        else if (tabContains(tab, "trade.taobao.com")) {
+            // 完成购买
+            setCookie(getAccountCookieKey(accounts[index], buyurl), 2);
+            updateHomeStats();
+            start();
+        }
     }
 });
 
