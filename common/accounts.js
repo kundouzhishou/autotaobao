@@ -6,6 +6,6 @@ var accounts = new Array(
 "zhangxuwe1236",
 "qq3097485",
 "huadan0625",
-"hu7312hu",
-"linzm1927",
+//"hu7312hu",
+//"linzm1927",
 "yangwencai01");
